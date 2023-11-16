@@ -3,4 +3,9 @@
     background-color: transparent;
     cursor: pointer;
     /* color: yellow; */
+    height: 100%;
+    margin-left: 10px;
+}
+.btn:hover{
+    background-color:rgba(103, 96, 96, 0.734);
 }

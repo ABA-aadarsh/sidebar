@@ -4,8 +4,10 @@ import {GrDocumentPdf} from "react-icons/gr"
 import { FaAngleDown } from "react-icons/fa";
 import FolderIcon from './FolderIcon/FolderToggleBtn'
 import FolderToggleBtn from './FolderIcon/FolderToggleBtn';
+import Menu from './Menu/Menu';
 
 function Sidebar() {
+    const [menuOptionActive,setMenuOptionActive]=useState(false)
     const folderStructure={
         name:"root",
         type:"folder",
@@ -51,7 +53,7 @@ function Sidebar() {
                             />
                             <span>$ROOT</span>
                         </div>
-                        <ul className='children'
+                        <ul className={style.children}
                         >
                         {
                                 element.child.map((i,index)=>(
@@ -69,39 +71,39 @@ function Sidebar() {
         }
         else if(element.type=="file"){
             return (
-                <div className='file'>
+                <div className={style.file}>
                     <GrDocumentPdf/>
-                    <span>{element.name}</span>
+                    <span >{element.name}</span>
                 </div>
             )
         }
         else if( element.type=="folder" && element.child.length==0){
             return (
-                <div className="folder">
-                    <div>
+                <div >
+                    <div className={style.folder}>
                     <FolderToggleBtn
                         onclick={(e)=>{
                             e.currentTarget.parentElement.parentElement.querySelector("ul").classList.toggle("hide")
                         }}
                     />
-                    <span>{element.name}</span>
+                    <span >{element.name}</span>
                     </div>
-                    <ul className='children' ></ul>
+                    <ul className={style.children} ></ul>
                 </div>
             )
         }
         else {
             return (
-                    <div className='folder'>
-                        <div>
+                    <div >
+                        <div className={style.folder}>
                         <FolderToggleBtn
                                 onclick={(e)=>{
                                     e.currentTarget.parentElement.parentElement.querySelector("ul").classList.toggle("hide")
                                 }}
                         />
-                        <span>{element.name}</span>
+                        <span >{element.name}</span>
                         </div>
-                        <ul className='children'>
+                        <ul className={style.children}>
                             {
                                 element.child.map((i,index)=>(
                                     <li key={index}>
@@ -116,15 +118,47 @@ function Sidebar() {
             )
         }
     }
-   
+    
+    useEffect(()=>{
+        const folders=[...document.querySelectorAll("."+style.folder)]
+        folders.forEach(folder=>{
+            folder.addEventListener("contextmenu",(e)=>{
+                e.preventDefault()
+                console.log("hello")
+                const menuContainer=document.querySelector("."+style.menuContainer)
+                menuContainer.style.left=e.clientX+3+"px"
+                menuContainer.style.top=e.clientY+3+"px"
+                setMenuOptionActive(true)
+            })
+        })
+
+
+        document.addEventListener("click",(e)=>{
+            var menuContainer = document.querySelector('.'+style.menuContainer);
+
+            if (e.target !== menuContainer && !menuContainer.contains(e.target)) {
+                setMenuOptionActive(false)
+            }
+        })
+    },[])
   return (
-    <div className='sidebar'>
+    <div className={style.sidebar}
+        onContextMenu={(e)=>e.preventDefault()}
+    >
         <ul>
             {
                 figureOutStructure(folderStructure)
             }
         </ul>
+        <div className={style.menuContainer}
+        >
+            {
+                menuOptionActive &&
+                <Menu/>
+            }
+        </div>
     </div>
+
   )
 
 
